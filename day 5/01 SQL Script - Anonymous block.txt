@@ -1,0 +1,184 @@
+1. Basic SQL Script with Anonymous container
+
+do begin
+
+--my sql script logic 
+declare x integer;
+declare y integer;
+declare z integer;
+
+y := 20;
+x := 50;
+z := :x + :y;
+
+--sap provides a dummy table to print data on screen
+--in sql scipt everything evolve around sql
+select z from dummy;
+
+end
+
+
+2. With parameters
+
+do (in x integer => ?,in y integer => ?) begin
+
+--my sql script logic 
+declare z integer;
+z := :x + :y;
+
+--sap provides a dummy table to print data on screen
+--in sql scipt everything evolve around sql
+select z from dummy;
+
+end
+
+3. Create first procedure
+
+
+do begin
+
+--my sql script logic 
+declare z integer;
+z := :x + :y;
+
+--sap provides a dummy table to print data on screen
+--in sql scipt everything evolve around sql
+select z from dummy;
+
+end
+
+4. If condition
+
+do begin
+
+if(mod(num,2) = 0) then
+	result := 'even';
+else
+	result := 'odd';
+end if;
+
+
+end
+
+
+5. While loop in action to calculate Factorial
+
+do begin
+
+result = 0;
+while :num > 0 do
+	result  := :result + ( :num * 10 );
+	num := :num - 1;
+end while;
+
+end
+
+6.  Dynamic Select
+
+do(in tabname varchar(10))
+ begin
+
+execute immediate 'select * from ' || :tabname;
+
+end
+
+7. Basics of an Array
+
+do(out result varchar(20))
+begin
+
+declare arr_indexer integer ARRAY = ARRAY(3,1,2);
+declare arr_fruits varchar(20) ARRAY = ARRAY('Apple','Cherry','Mango');
+
+result := :arr_fruits[:arr_indexer[2]];
+
+end
+
+8. Simple Cursor
+
+do(out pid1 varchar(20), out pid2 varchar(20))
+begin
+
+--declare the cursor which assigns to a query
+declare cursor c1 for select product_id from snwd_pd;
+--open cursor which connects to memeory
+open c1;
+--fetch to read data from memeory
+--read table itab index 1
+fetch c1 into pid1;
+fetch c1 into pid2;
+--close cursor
+close c1;
+
+end
+
+9. Cursor with Looop and parameter
+do(in icat varchar(20))
+begin
+
+declare arr_pid varchar(20) array;
+declare arr_price decimal(10,5) array;
+--declare the cursor which assigns to a query
+declare cursor c1(pcat varchar(20)) for select product_id, price
+ from snwd_pd where category = :pcat;
+
+--for loop to handle cursor by itself
+for wa as c1(:icat) do
+	arr_pid[c1::rowcount] = wa.product_id;
+	arr_price[c1::rowcount] = wa.price;
+end for;
+
+select :arr_pid, :arr_price from dummy;
+
+end
+
+
+10. We cannot export array out of a procedure, but we can export a table out of a procedure
+We need to map the array data to table
+
+
+do (in icat varchar(20), 
+			out tabret table(prodid varchar(20),
+							 amount decimal(10,5)) )
+begin
+
+declare arr_pid varchar(20) array;
+declare arr_price decimal(10,5) array;
+--declare the cursor which assigns to a query
+declare cursor c1(pcat varchar(20)) for select product_id, price
+ from snwd_pd where category = :pcat;
+
+--for loop to handle cursor by itself
+for wa as c1(:icat) do
+	arr_pid[c1::rowcount] = wa.product_id;
+	arr_price[c1::rowcount] = wa.price;
+end for;
+
+tabret = unnest(:arr_pid,:arr_price) as (prodid, amount);
+
+end
+
+11. Working with Data intensive operations in DB using Internal table
+
+
+do(
+			out tabret table(prodid varchar(20),
+							 amount decimal(10,5),
+							 mrp    decimal(10,5)) )
+begin
+declare lv_mrp decimal(15,3);
+declare reccount integer;
+declare i integer;
+--APPEND WA TO ITAB
+
+lt_prods = select product_id as prodid, price as amount from snwd_pd;
+
+--LOOP AT ITAB AND PROCESS
+reccount := record_count(:lt_prods);
+for i in 1..:reccount do
+	lv_mrp = :lt_prods.amount[i] * 118 / 100;
+	:TABRET.insert( (:lt_prods.prodid[i], :lt_prods.amount[i], :lv_mrp), :i);
+end for;
+
+
+end
