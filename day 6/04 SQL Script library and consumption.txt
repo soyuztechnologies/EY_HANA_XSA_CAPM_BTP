@@ -1,0 +1,69 @@
+masterdata.hdblibrary
+
+LIBRARY "masterdata"
+LANGUAGE SQLSCRIPT
+AS
+BEGIN
+
+public variable rowcount int;
+
+public function "employee_exists"(
+             in im_employee_id nvarchar(36) )
+             returns res boolean as
+begin
+    declare lv_count int;
+    select count(*) into lv_count from "ANUBHAV_DB_MASTER_EMPLOYEES"
+                           where loginname = im_employee_id;
+    if  lv_count > 0 then
+     res = true;
+    else
+     res = false;
+    end if;
+end;
+
+public procedure "get_employee_data"(
+             out ex_employees "ANUBHAV_DB_MASTER_EMPLOYEES" )
+   LANGUAGE SQLSCRIPT
+   SQL SECURITY INVOKER
+   AS
+begin
+  ex_employees = select * from "ANUBHAV_DB_MASTER_EMPLOYEES";
+  rowcount = record_count(:ex_employees);
+end;
+
+public procedure "get_business_partner_data"(
+             out ex_businesspartners "ANUBHAV_DB_MASTER_BUSINESSPARTNER" )
+   LANGUAGE SQLSCRIPT
+   SQL SECURITY INVOKER
+    AS
+begin
+  ex_businesspartners = select * from "ANUBHAV_DB_MASTER_BUSINESSPARTNER";
+  rowcount = record_count(:ex_businesspartners);
+end;
+
+END
+
+==================================================
+
+PROCEDURE "get_master_data"(
+      out ex_emp_exists boolean,
+      out ex_employees "ANUBHAV_DB_MASTER_EMPLOYEES" ,
+      out ex_emp_count int,
+      out ex_business_partners "ANUBHAV_DB_MASTER_BUSINESSPARTNER",
+      out ex_bp_count int
+ )
+   LANGUAGE SQLSCRIPT
+   SQL SECURITY INVOKER
+   --DEFAULT SCHEMA <default_schema_name>
+   AS
+BEGIN
+
+ex_emp_exists  = "masterdata":"employee_exists"('NICOLSJ');   
+
+call "masterdata":"get_employee_data"( ex_employees );
+ex_emp_count = "masterdata":rowcount;
+
+call "masterdata":"get_business_partner_data"( ex_business_partners );
+ex_bp_count = "masterdata":rowcount;
+
+END
