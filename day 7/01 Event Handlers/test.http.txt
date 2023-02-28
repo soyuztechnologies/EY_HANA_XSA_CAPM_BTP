@@ -61,7 +61,7 @@ Content-Type: application/json;IEEE754Compatible=true
 }
 
 ###Read From Custom Handler
-GET http://localhost:4004/mysrvdemo/ReadEmoployeeSrv/88488176-0f46-4b32-95c1-ad2028f12278
+GET http://localhost:4004/mysrvdemo/ReadEmoployeeSrv
 
 ###Create Employee with custom handler
 POST http://localhost:4004/mysrvdemo/InsertEmployeeSrv
@@ -69,9 +69,9 @@ Content-Type: application/json;IEEE754Compatible=true
 
 {           
     "ID": "02BD2137-0890-1EEA-A6C2-BB55C1978969",
-    "nameFirst": "Anubhav",
+    "nameFirst": "Messi",
     "nameMiddle": null,
-    "nameLast": "Oberoy",
+    "nameLast": "Leone",
     "nameInitials": null,
     "sex": "M",
     "language": "E",
@@ -83,14 +83,14 @@ Content-Type: application/json;IEEE754Compatible=true
 }
 
 ###Update using Custom Handler
-PUT  http://localhost:4004/mysrvdemo/UpdateEmployeeSrv/02BD2137-0890-1EEA-A6C2-BB55C19867FB
+PUT  http://localhost:4004/mysrvdemo/UpdateEmployeeSrv/02BD2137-0890-1EEA-A6C2-BB55C1978969
 Content-Type: application/json;IEEE754Compatible=true
 
 {           
-    "ID": "02BD2137-0890-1EEA-A6C2-BB55C19867FB",
+    "ID": "02BD2137-0890-1EEA-A6C2-BB55C1978969",
     "nameFirst": "Chrisopher",
     "nameLast": "Columbus"
 }
 
 ###DELETE The data using Custom Handler
-DELETE http://localhost:4004/mysrvdemo/DeleteEmployeeSrv/88488176-0f46-4b32-95c1-ad2028f12278
+DELETE http://localhost:4004/mysrvdemo/DeleteEmployeeSrv/02BD2137-0890-1EEA-A6C2-BB55C1978969

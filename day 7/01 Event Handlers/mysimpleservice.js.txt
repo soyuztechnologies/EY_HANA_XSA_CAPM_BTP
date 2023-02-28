@@ -15,20 +15,20 @@ const mysrvdemo = function(srv){
             "nameLast":"Ronaldo"
         });
 
-        return result;
-    }
+        return results;
+    });
 
 
     srv.on("CREATE", "InsertEmployeeSrv", async(req,res) =>{
         console.log(req.data);
         var dataSet = [];
-        for (let i = 0; i < req.data.length; i++) {
-            const element = req.data[i];
-            var rString = randomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
-            element.ID = "02BD2137-0890-1EEA-A6C2-BB55C19787EE";
-            rString.toUpperCase();
-            dataSet.push(element);
-        }
+        // for (let i = 0; i < req.data.length; i++) {
+        //     const element = req.data[i];
+        //     var rString = randomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+        //     element.ID = "02BD2137-0890-1EEA-A6C2-BB55C19787EE";
+        //     rString.toUpperCase();
+        //     dataSet.push(element);
+        // }
         console.log(dataSet);
         let returnData = await cds.transaction(req).run([
 
@@ -77,7 +77,7 @@ const mysrvdemo = function(srv){
 
     });
 
-    srv.on("DELETE", "UpdateEmployeeSrv", async(req, res) => {
+    srv.on("DELETE", "DeleteEmployeeSrv", async(req, res) => {
 
         let returnData = await cds.transaction(req).run([
 
