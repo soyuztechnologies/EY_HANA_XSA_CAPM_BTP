@@ -1,0 +1,41 @@
+1. open terminal and switch to app directory
+2. take the packagejson out of purchaseorder folder and keep in app folder
+3. install the sap provided app router module - npm install @sap/approuter
+4. create a configuration file xs-app.json
+5. Inside packahe json of app folder, write a start script - "start": "node node_modules/@sap/approuter/approuter.js"
+
+6. Add the xs-app.json code to tell the app router, where are all my microservices
+
+https://github.com/soyuztechnologies/EY_HANA_XSA_CAPM_BTP/blob/master/day%209/03%20-%20Deployment/03%20-%20app.xs-app.json.txt
+
+{
+	"welcomeFile": "purchaseorder/webapp/",
+	"routes": [{
+			"source": "^/purchaseorder/webapp/(.*)$",
+			"target": "$1",
+			"localDir": "purchaseorder/webapp/",
+			"authenticationType": "none",
+			"csrfProtection": false
+		},
+		{
+			"source": "^/(.*)",
+			"destination": "srv-api",
+			"authenticationType": "none",
+			"csrfProtection": false
+		}
+	]
+}
+
+7. Add the UI module just below the srv module in mta.yaml
+
+  - name: mycap-ui
+    type: nodejs
+    path: app
+    requires:
+      - name: srv-api
+        group: destinations
+        properties:
+          name: srv-api
+          strictSSL: true
+          forwardAuthToken: true
+          url: '~{srv-url}'
